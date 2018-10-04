@@ -1,0 +1,10 @@
+# Map the following pillar to all masters using a top.sls like:
+#
+# base:
+#   'dcos:role:master':
+#     - match: grain
+#     - dcos_mine
+
+mine_functions:
+  dcos.ip: []
+  dcos.public_ip: []
