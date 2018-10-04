@@ -1,0 +1,61 @@
+# DC/OS Salt Formula Pillar Example
+dcos:
+  # The following are defaults used for all clusters.
+  # You can override any setting inside the individual cluster's config.
+  defaults:
+    # DC/OS Enterprise only - License Key
+    license:
+      key: LS0tLS1CRUdJTiBNRVNPU1BIRVJF...
+    # See https://docs.mesosphere.com/1.11/installing/production/advanced-configuration/configuration-reference/
+    # for information on all available config parameters. They'll also have to exist inside dcos/templates/config.yaml
+    config:
+      exhibitor_storage_backend: static
+      master_discovery: static
+      resolvers:
+        - 8.8.8.8
+        - 8.8.4.4
+      security: strict
+      telemetry_enabled: 'false'
+      fault_domain_enabled: 'false'
+      enable_docker_gc: 'true'
+      enable_gpu_isolation: 'true'
+      gpus_are_scarce: 'true'
+      platform: onprem
+      zk_super_credentials: super:verysecure
+      zk_master_credentials: dcos-master:supersecure
+      zk_agent_credentials: dcos-agent:extremelysecure
+    # DC/OS Enterprise only - specify an admin user that should replace the default bootstrap user.
+    admin:
+      login: admin
+      password: somesecurepassword
+  # Define all clusters here
+  clusters:
+    # What follows is the cluster handle/name. Use something short and
+    # descriptive consisting of letters and digits only.
+    webcluster:
+      installer:
+        url: https://downloads.dcos.io/dcos/stable/1.11.1/dcos_generate_config.sh
+        hash: sha256=1eac6caa4c083bf5809941f936dd790d65580844dea1f22670f6e47297941c33
+        type: oss
+      config:
+        cluster_name: Web
+    prod1:
+      installer:
+        url: https://downloads.mesosphere.com/...
+        hash: sha256=e5552a5196a2911c053992af334ec8ad0399f5e74f7f6e0195ad89a7c1baac19
+        type: enterprise
+      config:
+        cluster_name: Production 1
+        fault_domain_enabled: 'true'
+        security: strict
+        platform: aws
+        rexray_config_preset: aws
+        ip_detect_public_filename: salt://dcos/scripts/ip-detect-public.aws
+    soak4:
+      installer:
+        url: https://downloads.mesosphere.com/...
+        hash: sha256=e5552a5196a2911c053992af334ec8ad0399f5e74f7f6e0195ad89a7c1baac19
+        type: enterprise
+        upgrade_from: 1.10.6
+      config:
+        cluster_name: Soak 4

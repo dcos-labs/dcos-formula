@@ -1,0 +1,8 @@
+fileserver_backend:
+  - roots
+  - git
+
+gitfs_provider: pygit2
+gitfs_remotes:
+  - https://github.com/dcos-labs/dcos-formula.git:
+    - root: root

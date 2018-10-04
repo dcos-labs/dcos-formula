@@ -1,0 +1,31 @@
+{%- set master_list = salt['mine.get']('G@dcos:role:master and G@dcos:cluster-id:'+cluster, 'dcos.ip', tgt_type='compound') | dictsort() -%}
+bootstrap_url: file:///tmp/dcos-installer
+cluster_name: {{ config['cluster_name'] }}
+exhibitor_storage_backend: {{ config.get('exhibitor_storage_backend', salt['pillar.get']('dcos:defaults:config:exhibitor_storage_backend')) }}
+master_discovery: {{ config.get('master_discovery', salt['pillar.get']('dcos:defaults:config:master_discovery')) }}
+{%- if master_list|length > 0 %}
+master_list:
+{%- for minion, master_ip in master_list %}
+  - {{ master_ip }}
+{%- endfor %}
+{%- endif %}
+resolvers:
+{%- for resolver in config.get('resolvers', salt['pillar.get']('dcos:defaults:config:resolvers')) %}
+  - {{ resolver }}
+{%- endfor %}
+security: {{ config.get('security', salt['pillar.get']('dcos:defaults:config:security')) }}
+telemetry_enabled: {{ config.get('telemetry_enabled', salt['pillar.get']('dcos:defaults:config:telemetry_enabled')) }}
+fault_domain_enabled: {{ config.get('fault_domain_enabled', salt['pillar.get']('dcos:defaults:config:fault_domain_enabled')) }}
+zk_super_credentials: {{ config.get('zk_super_credentials', salt['pillar.get']('dcos:defaults:config:zk_super_credentials')) }}
+zk_master_credentials: {{ config.get('zk_master_credentials', salt['pillar.get']('dcos:defaults:config:zk_master_credentials')) }}
+zk_agent_credentials: {{ config.get('zk_agent_credentials', salt['pillar.get']('dcos:defaults:config:zk_agent_credentials')) }}
+enable_docker_gc: {{ config.get('enable_docker_gc', salt['pillar.get']('dcos:defaults:config:enable_docker_gc')) }}
+enable_gpu_isolation: {{ config.get('enable_gpu_isolation', salt['pillar.get']('dcos:defaults:config:enable_gpu_isolation')) }}
+gpus_are_scarce: {{ config.get('gpus_are_scarce', salt['pillar.get']('dcos:defaults:config:gpus_are_scarce')) }}
+platform: {{ config.get('platform', salt['pillar.get']('dcos:defaults:config:platform')) }}
+{%- if config.get('rexray_config_preset') %}
+rexray_config_preset: {{ config.get('rexray_config_preset') }}
+{%- endif %}
+{%- if config.get('ip_detect_public_filename', salt['pillar.get']('dcos:defaults:config:ip_detect_public_filename')) %}
+ip_detect_public_filename: /genconf/ip-detect-public
+{%- endif %}
