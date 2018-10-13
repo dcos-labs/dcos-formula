@@ -1,13 +1,16 @@
-{%- set master_list = salt['mine.get']('G@dcos:role:master and G@dcos:cluster-id:'+cluster, 'dcos.ip', tgt_type='compound') | dictsort() -%}
+{%- set master_list = config.get('master_list', None) -%}
+{%- if master_list == None -%}
+{%-   set master_list = salt['mine.get']('G@dcos:role:master and G@dcos:cluster-id:'+cluster, 'dcos.ip', tgt_type='compound').values() | list -%}
+{%- endif -%}
 bootstrap_url: file:///tmp/dcos-installer
 cluster_name: {{ config['cluster_name'] }}
 exhibitor_storage_backend: {{ config.get('exhibitor_storage_backend', salt['pillar.get']('dcos:defaults:config:exhibitor_storage_backend')) }}
 master_discovery: {{ config.get('master_discovery', salt['pillar.get']('dcos:defaults:config:master_discovery')) }}
 {%- if master_list|length > 0 %}
 master_list:
-{%- for minion, master_ip in master_list %}
+{%-   for master_ip in master_list | sort %}
   - {{ master_ip }}
-{%- endfor %}
+{%-   endfor %}
 {%- endif %}
 resolvers:
 {%- for resolver in config.get('resolvers', salt['pillar.get']('dcos:defaults:config:resolvers')) %}
