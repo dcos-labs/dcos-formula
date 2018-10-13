@@ -1,4 +1,4 @@
-{% from 'dcos/_clusters.sls' import clusters %}
+{% from 'dcos/_clusters.sls' import clusters, cache_dir %}
 
 include:
   - .docker
@@ -13,14 +13,14 @@ include:
 {%- else %}
     - name: sh dcos_generate_config.sh --genconf
 {%- endif %}
-    - cwd: /srv/salt/dcos_cache/{{ cluster }}
+    - cwd: {{ cache_dir }}/{{ cluster }}
     - require:
       - service: docker
-      - file: /srv/salt/dcos_cache/{{ cluster }}/genconf/serve
+      - file: {{ cache_dir }}/{{ cluster }}/genconf/serve
       - file: {{ cluster }} installer download
       - file: {{ cluster }} config.yaml
 
-/srv/salt/dcos_cache/{{ cluster }}/genconf/serve:
+{{ cache_dir }}/{{ cluster }}/genconf/serve:
   file.absent
 
 {% endfor %}

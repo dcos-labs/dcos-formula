@@ -1,4 +1,4 @@
-{% from 'dcos/_clusters.sls' import clusters %}
+{% from 'dcos/_clusters.sls' import clusters, cache_dir %}
 
 include:
   - .genconf
@@ -7,12 +7,12 @@ include:
 {{ cluster }} serve.tar.gz:
   cmd.run:
     - name: tar czf ../../serve.tar.gz .
-    - cwd: /srv/salt/dcos_cache/{{ cluster }}/genconf/serve/
+    - cwd: {{ cache_dir }}/{{ cluster }}/genconf/serve/
     - require:
       - cmd: {{ cluster }} genconf
-      - file: /srv/salt/dcos_cache/{{ cluster }}/serve.tar.gz
+      - file: {{ cache_dir }}/{{ cluster }}/serve.tar.gz
 
-/srv/salt/dcos_cache/{{ cluster }}/serve.tar.gz:
+{{ cache_dir }}/{{ cluster }}/serve.tar.gz:
   file.absent
 
 {% endfor %}

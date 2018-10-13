@@ -1,9 +1,9 @@
-{% from 'dcos/_clusters.sls' import clusters %}
+{% from 'dcos/_clusters.sls' import clusters, cache_dir %}
 
 {% for cluster, properties in clusters.items() %}
 {{ cluster }} installer download:
   file.managed:
-    - name: /srv/salt/dcos_cache/{{ cluster }}/dcos_generate_config.sh
+    - name: {{ cache_dir }}/{{ cluster }}/dcos_generate_config.sh
     - source: {{ properties['installer']['url'] }}
     - source_hash: {{ properties['installer']['hash'] }}
     - makedirs: True

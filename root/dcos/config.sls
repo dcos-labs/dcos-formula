@@ -1,9 +1,9 @@
-{% from 'dcos/_clusters.sls' import clusters %}
+{% from 'dcos/_clusters.sls' import clusters, cache_dir %}
 
 {% for cluster, properties in clusters.items() %}
 {{ cluster }} config.yaml:
   file.managed:
-    - name: /srv/salt/dcos_cache/{{ cluster }}/genconf/config.yaml
+    - name: {{ cache_dir }}/{{ cluster }}/genconf/config.yaml
     - source: salt://dcos/templates/config.yaml
     - template: jinja
     - makedirs: True
@@ -13,7 +13,7 @@
 
 {{ cluster }} ip-detect:
   file.managed:
-    - name: /srv/salt/dcos_cache/{{ cluster }}/genconf/ip-detect
+    - name: {{ cache_dir }}/{{ cluster }}/genconf/ip-detect
     - source: salt://dcos/scripts/ip-detect
     - makedirs: True
     - require_in:
@@ -22,7 +22,7 @@
 {% if properties['installer'].get('type') == 'enterprise' %}
 {{ cluster }} license.txt:
   file.managed:
-    - name: /srv/salt/dcos_cache/{{ cluster }}/genconf/license.txt
+    - name: {{ cache_dir }}/{{ cluster }}/genconf/license.txt
     - source: salt://dcos/templates/license.txt
     - template: jinja
     - makedirs: True
@@ -35,7 +35,7 @@
 {% if properties['config'].get('fault_domain_enabled') == 'true' %}
 {{ cluster }} fault-domain-detect:
   file.managed:
-    - name: /srv/salt/dcos_cache/{{ cluster }}/genconf/fault-domain-detect
+    - name: {{ cache_dir }}/{{ cluster }}/genconf/fault-domain-detect
     - source: salt://dcos/scripts/fault-domain-detect
     - makedirs: True
     - require_in:
@@ -45,7 +45,7 @@
 {% if properties['config'].get('ip_detect_public_filename', salt['pillar.get']('dcos:defaults:config:ip_detect_public_filename')) %}
 {{ cluster }} ip-detect-public:
   file.managed:
-    - name: /srv/salt/dcos_cache/{{ cluster }}/genconf/ip-detect-public
+    - name: {{ cache_dir }}/{{ cluster }}/genconf/ip-detect-public
     - source: {{ properties['config'].get('ip_detect_public_filename', salt['pillar.get']('dcos:defaults:config:ip_detect_public_filename')) }}
     - makedirs: True
     - require_in:
