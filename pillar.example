@@ -1,9 +1,11 @@
 # DC/OS Salt Formula Pillar Example
 dcos:
-  # Specify the bootstrap nodes's cache directory and URI prefix
-  # This could be a directory on the salt-master which can then be
-  # accessed using the salt:// scheme, or a web server directory
-  # which would then be accessed using the http(s):// scheme.
+  # Specify the bootstrap nodes's cache directory and URI prefix. This could is a directory on the salt-master.
+  # Note that dcos:cache_dir is only used on the bootstrap node (i.e. the salt-master) whereas dcos:cache_uri is only used on the
+  # nodes of a DC/OS cluster. The general idea of this pillar is to only be visible on the bootstrap node. If you change the default
+  # path it's advisable to only make dcos:cache_uri available to the cluster nodes or provide it as an argument to the salt cli client.
+  # E.g. salt -C "G@dcos:cluster-id:${CLUSTER}" state.apply dcos.install pillar="{'dcos:cache_uri': 'salt://somedir/cache'}"
+  # Again this is only necessary when changing the default.
   cache_dir: /srv/salt/dcos_cache
   cache_uri: salt://dcos_cache
   # The following are defaults used for all clusters.
