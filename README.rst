@@ -37,6 +37,17 @@ Usage
 The general idea of this formula is that you prepare the DC/OS installer on the Salt Master, tagged with a grain ``dcos:role:bootstrap``,
 from where it is downloaded by the minions of a cluster tagged with a grain ``dcos:role:[master,slave,slave_public]`` and a ``dcos:cluster-id:foobar``.
 
+Example:
+
+::
+
+    $ export CLUSTER=prod1
+    $ salt-call grains.setval dcos "{'role': 'bootstrap'}"
+    $ salt 'master*.prod1.example.com' grains.setval dcos "{'role': 'master', 'cluster-id': '${CLUSTER}'}"
+    $ salt 'agent*.prod1.example.com' grains.setval dcos "{'role': 'slave', 'cluster-id': '${CLUSTER}'}"
+    $ salt 'pubagent*.prod1.example.com' grains.setval dcos "{'role': 'slave_public', 'cluster-id': '${CLUSTER}'}"
+
+
 The cluster configuration is stored in a pillar only accessible to the Salt Master. By default each state iterates over all available clusters.
 E.g. ``salt-call state.apply dcos.prepare`` on the Salt Master would prepare the DC/OS installer of all clusters. To target a specific cluster
 provide the ``cluster`` variable as a pillar like so:
