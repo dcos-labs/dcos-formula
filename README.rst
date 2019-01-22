@@ -27,7 +27,7 @@ Downloads and installs DC/OS on any node tagged with ``dcos:role`` ``master``, `
 ------------
 Downloads and upgrade DC/OS on any node tagged with ``dcos:role`` ``master``, ``slave`` or ``slave_public``
 
-``dcos.admin``
+``dcos.change_login``
 ------------
 Create the admin user and remove the default bootstrap user the first time a DC/OS cluster has been installed
 
@@ -75,11 +75,11 @@ Note that is you run stateful services they might require a more specific order 
 
 
 If a cluster is being installed for the first time it is advisable to change the default bootstrap user and create a dedicated admin.
-To do so use the `dcos.admin` state called from the bootstrap node.
+To do so use the `dcos.change_login` state called from the bootstrap node.
 
 ::
 
-    $ salt-call state.apply dcos.admin pillar="{'cluster': '${CLUSTER}'}"
+    $ salt-call state.apply dcos.change_login pillar="{'cluster': '${CLUSTER}'}"
 
 If the bootstrap node is not allowed to communicate with the master's adminrouter there's also an execution module available that will do the same thing:
 
